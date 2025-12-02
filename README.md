@@ -1,73 +1,53 @@
-# React + TypeScript + Vite
+# Disclaimer
+This project was built with extensive help from GitHub Copilot.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Paws & Preferences
 
-Currently, two official plugins are available:
+Paws & Preferences is a swipe-style single-page app that helps users discover which cats they like by browsing a curated deck of photos from [Cataas](https://cataas.com).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- **Mobile-friendly swipe deck** – Swipe right to “Love it” or left to “Skip,” with touch and mouse gestures powered by `react-swipeable`.
+- **Prefetch & caching** – Images are fetched, cached, and shimmered in to minimize blank states while still letting the deck feel responsive.
+- **Progress tracker** – Displays current card index, total cats, and liked count so users always know where they are in the flow.
+- **Animated feedback** – Cards show like/dislike indicators and stack styling to mirror modern dating apps.
+- **Session summary** – After the deck ends, users see a gallery of every cat they loved plus quick stats and a “Start again” button.
+- **Graceful loading states** – “Summoning cats” screen plus in-card skeletons keep the UI polished even on slow networks.
+- **Resettable experience** – Users can refresh the entire deck for another pass without leaving the page.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- **Vite + React + TypeScript** – Fast HMR dev loop and type safety.
+- **react-swipeable** – Uniform swipe gestures across mouse and touch.
+- **CSS custom styling** – Fully custom layout, gradients, and animations without external UI kits.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Project Structure
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├─ App.tsx        # Main UI + state management, swipe logic, image cache
+├─ App.css        # Component-level styling, animations, skeletons
+└─ main.tsx       # React entry point
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev -- --host 0.0.0.0 --port 5173
 ```
+
+Open the forwarded URL (or run `"$BROWSER" http://localhost:5173`).  
+For a production build:
+
+```bash
+npm run build
+npm run preview
+```
+
+## Key Implementation Details
+
+- **Image pool** – Cataas IDs are generated up front, fetched via `fetch -> Blob -> Object URL`, and recycled when the deck resets.
+- **Progressive readiness** – The UI becomes interactive once the first *n* cats finish downloading; slower images continue fetching in the background.
+- **Accessibility** – Buttons include focus styles, gesture alternatives, and text labels to support keyboard use.
+- **State machine** – The app cycles through `loading → browsing → summary`, tracked via derived booleans to keep rendering logic predictable.
